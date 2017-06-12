@@ -1,13 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 # format $DISK as GPT, GUID Partition Table
 
 timedatectl set-ntp true
 
-echo "Disk: $DISK"
-sgdisk -Z $DISK
+sgdisk -Z ${DISK:?not null}
 
 sgdisk -n 0:0:+300M -t 0:ef00 $DISK
-sgdisk -n 0:0:+"$ROOT_SIZE"G -t 0:8300 $DISK
+sgdisk -n 0:0:+"${ROOT_SIZE:?not null}"G -t 0:8300 $DISK
 sgdisk -n 0:0:0 -t 0:8300 $DISK
 
 sgdisk -p $DISK
@@ -30,9 +29,9 @@ mkdir /mnt/home
 mount "$DISK"3 /mnt/home
 
 #Select the nearest mirrors
-sed -ni '/Ru/{n;p;}' /etc/pacman.d/mirrorlist
-
-genfstab -U /mnt >> /mnt/etc/fstab
+sed -ni.bak '/Ru/{n;p;}' /etc/pacman.d/mirrorlist
 
 #install necessary
-pacstrap /mnt base
+pacstrap /mnt base linux-lts intel-ucode sudo
+
+genfstab -U /mnt > /mnt/etc/fstab

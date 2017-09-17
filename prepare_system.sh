@@ -32,6 +32,6 @@ mount "$DISK"3 /mnt/home
 sed -ni.bak '/Ru/{n;p;}' /etc/pacman.d/mirrorlist
 
 #install necessary
-pacstrap /mnt base linux-lts intel-ucode sudo
+pacstrap /mnt base linux-lts linux-lts-headers intel-ucode sudo
 
 genfstab -U /mnt > /mnt/etc/fstab

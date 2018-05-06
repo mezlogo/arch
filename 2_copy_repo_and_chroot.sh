@@ -1,3 +1,3 @@
 #!/bin/bash
-cp -r /root/configuration /mnt/home
+cp -r "$(dirname ${BASH_SOURCE[0]})" /mnt/home
 arch-chroot /mnt

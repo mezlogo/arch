@@ -16,6 +16,6 @@ passwd
 
 bootctl install
 
-cp "$(dirname ${BASH_SOURCE[0]})/template/loader.conf" /boot/loader/
+cp -r "$(dirname ${BASH_SOURCE[0]})/template/loader.conf" /boot/loader/
 
 PARTUUID=$(blkid -s PARTUUID -o value /dev/sda2) envsubst < template/arch.conf > /boot/loader/entries/arch.conf

@@ -1,6 +1,13 @@
 #!/bin/bash
 # format $DISK as GPT, GUID Partition Table
 
+DISK=$1
+ROOT_SIZE=$2
+
+[[ ! -b $DISK ]] && { echo "Disk: $DISK should be a block device"; exit -1; }
+
+[[ ! "$ROOT_SIZE" =~ ^[0-9]+$ ]] && { echo "Root size: $ROOT_SIZE should be a number"; exit -1; }
+
 timedatectl set-ntp true
 
 sgdisk -Z ${DISK:?not null}

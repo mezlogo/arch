@@ -14,8 +14,12 @@ Scripts contain arch linux, systemd boot, gpt, boot & root & home partitions.
 
 2) Installation
 
-- run first script with ROOT_SIZE and DISK variables, for instance: `ROOT_SIZE=20 DISK=/dev/sda ./1_prepare_system.sh`
+- run first script with ROOT_SIZE and DISK variables, for instance: `./1_prepare_system.sh /dev/sda 20`
 
 - copy configs and change root
 
 - in your installed arch run finishing scripts
+
+3) Post install:
+
+- turn on inet: `sudo systemctl start dhcpcd@enp3s0`

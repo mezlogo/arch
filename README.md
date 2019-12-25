@@ -24,6 +24,6 @@ Scripts contain arch linux, systemd boot, gpt, boot & root & home partitions.
 
 3) Post install:
 
-- turn on inet: `sudo systemctl start dhcpcd@enp3s0`
+- turn on inet: `sudo ip link set enp0s3 up && sudo systemctl start dhcpcd@enp3s0`
 
 - install pikaur: `./5_install_pikaur.sh`

@@ -22,8 +22,8 @@ Scripts contain arch linux, systemd boot, gpt, boot & root & home partitions.
 
 - create user: `USERNAME=borsh ./4_create_user.sh`
 
-- install pikaur: `./5_install_pikaur.sh`
-
 3) Post install:
 
 - turn on inet: `sudo systemctl start dhcpcd@enp3s0`
+
+- install pikaur: `./5_install_pikaur.sh`

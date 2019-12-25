@@ -4,21 +4,25 @@ Scripts contain arch linux, systemd boot, gpt, boot & root & home partitions.
 
 1) Preparation:
 
-- sync pacman database: `pacman -Sy`
+- sync pacman database and install git: `pacman -Sy git`
 
-- make pacman ignore space: `sed -i 's/CheckSpace/#CheckSpace/' /etc/pacman.conf`
-
-- install git: `pacman -S git`
-
-- clone this repo: `git clone http://github.com/mezlogo/arch`
+- clone this repo and change dir: `git clone http://github.com/mezlogo/arch /tmp/arch && cd /tmp/arch`
 
 2) Installation
 
-- run first script with ROOT_SIZE and DISK variables, for instance: `./1_prepare_system.sh /dev/sda 20`
+- run first script with $PATH_TO_DISK $ROOT_SIZE_IN_GB variables, for instance: `./1_prepare_system.sh /dev/sda 20`
 
-- copy configs and change root
+- copy configs and change root: `./2_copy_repo_and_chroot.sh`
 
-- in your installed arch run finishing scripts
+- NOW you're in your installed arch run finishing scripts
+
+- change directory to `cd /home/postinstall`
+
+- write hostname, set timezone and so on by executing `HOSTNAME=myhostname ./3_configure_base.sh`
+
+- create user: `USERNAME=borsh ./4_create_user.sh`
+
+- install pikaur: `./5_install_pikaur.sh`
 
 3) Post install:
 

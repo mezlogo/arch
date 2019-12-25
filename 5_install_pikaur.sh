@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-sudo pacman -Syu base-devel git --noconfirm --needed
+pacman -Syu base-devel git --noconfirm --needed
 
-git clone https://github.com/actionless/pikaur /tmp/pikaur
+git clone https://github.com/actionless/pikaur
 
-cd /tmp/pikaur
+cd pikaur
 
 makepkg -fsri

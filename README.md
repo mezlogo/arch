@@ -1,6 +1,4 @@
-Arch installation guide by mezlogo
-
-Scripts contain arch linux, systemd boot, gpt, boot & root & home partitions.
+My installation arch linux guide.
 
 1) Preparation:
 

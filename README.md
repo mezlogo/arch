@@ -16,9 +16,9 @@ My installation arch linux guide.
 
 - change directory to `cd /home/postinstall`
 
-- write hostname, set timezone and so on by executing `HOSTNAME=myhostname ./3_configure_base.sh`
+- write hostname, set timezone and so on by executing `./3_configure_base.sh myhostname`
 
-- create user: `USERNAME=borsh ./4_create_user.sh`
+- create user: `./4_create_user.sh myusername`
 
 3) Post install:
 

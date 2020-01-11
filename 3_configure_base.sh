@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo ${HOSTNAME:?not null} > /etc/hostname
+echo ${$1:?not null} > /etc/hostname
 
 #set the time zone
 ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime

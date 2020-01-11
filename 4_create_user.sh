@@ -1,5 +1,5 @@
 #!/bin/bash
-useradd -m -G wheel -s /bin/bash ${$1:?not null}
+useradd -m -G wheel -s /bin/bash ${1:?not null}
 
 passwd ${1:?not null}
 

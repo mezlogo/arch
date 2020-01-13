@@ -18,4 +18,4 @@ bootctl install
 
 cp -r "$(dirname ${BASH_SOURCE[0]})/template/loader.conf" /boot/loader/
 
-PARTUUID=$(blkid -s PARTUUID -o value /dev/sda2) envsubst < template/arch.conf > /boot/loader/entries/arch.conf
+PARTUUID=$(blkid -s PARTUUID -o value ${2:?pass device with root partition}) envsubst < template/arch.conf > /boot/loader/entries/arch.conf

@@ -39,6 +39,6 @@ mount "$DISK"3 /mnt/home
 sed -ni.bak '/Ru/{n;p;}' /etc/pacman.d/mirrorlist
 
 #install necessary
-pacstrap /mnt base base-devel linux linux-headers intel-ucode dhcpcd
+pacstrap /mnt base base-devel linux linux-firmware linux-headers intel-ucode dhcpcd
 
 genfstab -U /mnt > /mnt/etc/fstab

@@ -35,9 +35,6 @@ mount "$DISK"1 /mnt/boot
 mkdir /mnt/home
 mount "$DISK"3 /mnt/home
 
-#Select the nearest mirrors
-sed -ni.bak '/Ru/{n;p;}' /etc/pacman.d/mirrorlist
-
 #install necessary
 pacstrap /mnt base base-devel linux linux-firmware linux-headers intel-ucode dhcpcd
 

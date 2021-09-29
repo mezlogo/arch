@@ -19,7 +19,7 @@ options=$(getopt hainw ${*})
 if [ $? != 0 ] ; then show_usage; exit 1; fi
 eval set -- "${options}"
 
-PACKAGES=(base base-devel dhcpcd linux-zen linux-zen-headers)
+PACKAGES=(base base-devel dhcpcd linux-zen linux-zen-headers git)
 NVME_PREFIX=""
 while true; do
     case $1 in

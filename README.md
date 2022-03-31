@@ -40,3 +40,15 @@
 - turn on inet: `sudo ip link set enp0s3 up && sudo systemctl start dhcpcd@enp3s0`
 
 - install pikaur: `./4_install_pikaur.sh`
+
+4) Installation intel, ssd, root 30GB
+
+```
+./1_install_base.sh -i /dev/sda 30
+./2_copy_repo_and_chroot.sh
+cd /home/postinstall
+./3_configure_base.sh -i dmezentsev /dev/sda2 mezlogo
+reboot
+./4_install_pikaur
+sudo rm -rf /home/postinstall
+```

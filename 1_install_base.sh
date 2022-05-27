@@ -20,7 +20,7 @@ options=$(getopt hainw ${*})
 if [ $? != 0 ] ; then show_usage; exit 1; fi
 eval set -- "${options}"
 
-PACKAGES=(base base-devel linux-zen linux-zen-headers linux-firmware git neovim)
+PACKAGES=(base base-devel pacman-contrib linux-zen linux-zen-headers linux-firmware git neovim)
 NVME_PREFIX=""
 while true; do
     case $1 in
@@ -44,8 +44,6 @@ ROOT_SIZE="$2"
 
 [[ ! -b $BLOCK_DEVICE ]] && echo "Disk: $BLOCK_DEVICE should be a block device" && exit 1
 [[ ! "$ROOT_SIZE" =~ ^[0-9]+$ ]] && echo "Root size: $ROOT_SIZE should be an integer" && exit 1
-
-[[ ! "$ROOT_SIZE" = ^[0-9]+$ ]] && echo "Root size: $ROOT_SIZE should be an integer" && exit 1
 
 timedatectl set-ntp true
 

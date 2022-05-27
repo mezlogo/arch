@@ -78,7 +78,58 @@ ip a
 - config pacman and mirrors: `./0_useful_preparation.sh`
 - install base. Arguments depend on your system, for instance:
   - amd `-a` notebook with nvme storage `-n` and wifi `-w`, with only two partitions `0`: `./1_install_base.sh -anw /dev/nvme0n0 0`
-  - qemu/kvm with dedicated root partition of 4 gb: `./1_install_base.sh /dev/nvme0n0 4`
+  - qemu/kvm with dedicated root partition of 4 gb: `./1_install_base.sh /dev/sda 4`
+- chroot: `./2_copy_repo_and_chroot.sh`
+- create user, hostname, locale
+  - for amd notebook: `./3_configure_base.sh -a mobilestation /dev/nvme0n0p2 mezlogo`
+  - vm: `./3_configure_base.sh virtvm /dev/sda2 vagrant`
+- exit and reboot
+
+#### Inside installed os
+
+##### Configure internet
+
+###### Wifi configuration
+
+- check rfkill
+- create file `/etc/iwd/main.conf` with such content:
+```txt
+[General]
+EnableNetworkConfiguration=true
+
+[Scan]
+DisablePeriodicScan=true
+```
+- turn on services:
+```sh
+sudo systemctl enable --now iwd
+sudo systemctl enable --now systemd-resolved
+```
+- connect to wifi using `iwctl`
+
+###### Wired configuration
+
+- create file `/etc/systemd/network/20-wired.network` with such content:
+```txt
+[Match]
+Name=enp9s0
+
+[Network]
+DHCP=yes
+```
+- turn on services:
+```sh
+sudo systemctl enable --now systemd-networkd
+sudo systemctl enable --now systemd-resolved
+```
+
+##### Install pikaur
+
+Just execute `./4_install_pikaur.sh`
+
+### Useful tips
+
+- configure mirrors, pacman conf, sysctl and journald: `./5_after_install.sh`
 
 WORK IN PROGRESS
 

@@ -77,11 +77,11 @@ ip a
 
 - config pacman and mirrors: `./0_useful_preparation.sh`
 - install base. Arguments depend on your system, for instance:
-  - amd `-a` notebook with nvme storage `-n` and wifi `-w`, with only two partitions `0`: `./1_install_base.sh -anw /dev/nvme0n0 0`
+  - amd `-a` notebook with nvme storage `-n` and wifi `-w`, with only two partitions `0`: `./1_install_base.sh -anw /dev/nvme0n1 0`
   - qemu/kvm with dedicated root partition of 4 gb: `./1_install_base.sh /dev/sda 4`
 - chroot: `./2_copy_repo_and_chroot.sh`
 - create user, hostname, locale
-  - for amd notebook: `./3_configure_base.sh -a mobilestation /dev/nvme0n0p2 mezlogo`
+  - for amd notebook: `./3_configure_base.sh -a mobilestation /dev/nvme0n1p2 mezlogo`
   - vm: `./3_configure_base.sh virtvm /dev/sda2 vagrant`
 - exit and reboot
 

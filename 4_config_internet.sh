@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
-if [ -d /etc/iwd ]; then
-  sudo cp main.conf /etc/iwd/main.conf
+
+if pacman -Q iwd; then
+  sudo rfkill unblock wlan
   sudo systemctl enable --now iwd
+  sudo cp main.conf /etc/iwd/main.conf
+  sudo systemctl restart iwd
 else
   sudo cp 20-wired.network /etc/systemd/network/20-wired.network
   sudo systemctl enable --now systemd-networkd

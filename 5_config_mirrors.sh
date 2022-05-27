@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-./0_useful_preparation.sh
+sudo ./0_useful_preparation.sh

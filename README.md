@@ -92,79 +92,17 @@ ip a
 ###### Wifi configuration
 
 - check rfkill
-- create file `/etc/iwd/main.conf` with such content:
-```txt
-[General]
-EnableNetworkConfiguration=true
-
-[Scan]
-DisablePeriodicScan=true
-```
-- turn on services:
-```sh
-sudo systemctl enable --now iwd
-sudo systemctl enable --now systemd-resolved
-```
 - connect to wifi using `iwctl`
 
 ###### Wired configuration
 
-- create file `/etc/systemd/network/20-wired.network` with such content:
-```txt
-[Match]
-Name=enp9s0
+- write device name to `main.conf`
+- exec `./4_config_internet.sh`
 
-[Network]
-DHCP=yes
-```
-- turn on services:
-```sh
-sudo systemctl enable --now systemd-networkd
-sudo systemctl enable --now systemd-resolved
-```
+### After install
+
+Configure mirrors, pacman conf and journald: `./5_after_install.sh`
 
 ##### Install pikaur
 
-Just execute `./4_install_pikaur.sh`
-
-### Useful tips
-
-- configure mirrors, pacman conf, sysctl and journald: `./5_after_install.sh`
-
-WORK IN PROGRESS
-
-2. test
-
-1) Preparation:
-
-- sync pacman database and install git: `pacman -Sy git`
-
-- clone this repo and change dir: `git clone http://github.com/mezlogo/arch && cd arch`
-
-2) Installation:
-
-- `./1_install_base.sh /dev/vda 10`
-
-- copy configs and change root: `./2_copy_repo_and_chroot.sh`
-
-- change directory to `cd /home/postinstall`
-
-- write hostname, set timezone and so on by executing `./3_configure_base.sh virtualstation /dev/vda2 mezlogo`
-
-3) Post install:
-
-- turn on inet: `sudo ip link set enp0s3 up && sudo systemctl start dhcpcd@enp3s0`
-
-- install pikaur: `./4_install_pikaur.sh`
-
-4) Installation intel, ssd, root 30GB
-
-```
-./1_install_base.sh -i /dev/sda 30
-./2_copy_repo_and_chroot.sh
-cd /home/postinstall
-./3_configure_base.sh -i dmezentsev /dev/sda2 mezlogo
-reboot
-./4_install_pikaur
-sudo rm -rf /home/postinstall
-```
+Just execute `./6_install_pikaur.sh`

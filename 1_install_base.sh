@@ -2,7 +2,7 @@
 
 show_usage() {
     cat << EOF
-Usage: ${0} [-ainw] path_to_disk root_size
+Usage: ${0} [-ain] path_to_disk root_size
 Create 2 or 3 partions and install necessary packages
 When root_size equals 0, then no seprate home partition would be created
 
@@ -10,7 +10,6 @@ When root_size equals 0, then no seprate home partition would be created
 -a          Install AMD microcodes
 -i          Install INTEL microcodes
 -n          Install on nvme device: adds suffix 'p'
--w          Install iwd for wifi
 
 EOF
 }
@@ -20,14 +19,13 @@ options=$(getopt hainw ${*})
 if [ $? != 0 ] ; then show_usage; exit 1; fi
 eval set -- "${options}"
 
-PACKAGES=(base base-devel pacman-contrib linux-zen linux-zen-headers linux-firmware git neovim)
+PACKAGES=(base base-devel pacman-contrib linux linux-headers linux-firmware git neovim networkmanager)
 NVME_PREFIX=""
 while true; do
     case $1 in
     -h) show_usage; exit 0 ;;
     -a) PACKAGES+=(amd-ucode) ;;
     -i) PACKAGES+=(intel-ucode) ;;
-    -w) PACKAGES+=(iwd) ;;
     -n) NVME_PREFIX="p" ;;
     --)
         shift

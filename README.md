@@ -41,24 +41,11 @@ qemu-system-x86_64 -cpu host -smp 4 -enable-kvm -bios /usr/share/edk2-ovmf/x64/O
   - vm: `./3_configure_base.sh virtvm /dev/sda2 vagrant`
 - exit and reboot
 
-#### Inside installed os
+## 5. after reboot
 
-##### Configure internet
-
-###### Wifi configuration
-
-- check rfkill
-- connect to wifi using `iwctl`
-
-###### Wired configuration
-
-- write device name to `main.conf`
-- exec `./4_config_internet.sh`
-
-### After install
-
-Configure mirrors, pacman conf and journald: `./5_after_install.sh`
-
-##### Install pikaur
-
-Just execute `./6_install_pikaur.sh`
+- test rfkill
+- exec `/home/postinstall/4_config_internet.sh`
+- exec `/home/postinstall/5_config_mirrors.sh`
+- copy to home and install pikaur `./6_install_pikaur.sh`
+- install pikaur using pikaur `pikaur -Syu pikaur`
+- remove junk: `rm -rf ~/.local ~/.cache ~/pikaur`

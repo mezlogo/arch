@@ -51,8 +51,8 @@ echo 'LANG=en_US.UTF-8' > /etc/locale.conf
 
 passwd
 
-#bootctl install
-mkinitcpio -P
+bootctl install
+# mkinitcpio -P
 
 cp -r "$(dirname ${BASH_SOURCE[0]})/template/loader.conf" /boot/loader/
 

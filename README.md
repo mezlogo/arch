@@ -77,5 +77,4 @@ An AMD ucodes, `/dev/sda2` as an root partition, `virtarch` is a hostname and `m
 - shutdown and reboot into fresh installed disk
 - reconnect with your ssh client
 - install pikaur from source code: `/home/postinstall/7_install_pikaur.sh`
-- cleanup disk: `/home/postinstall/8_cleanup.sh`
-- install nodejs, npm and deskmanager: `/home/postinstall/9_install_deskmanager.sh`
+- install nodejs, npm and deskmanager, and cleanup: `/home/postinstall/8_install_deskmanager_and_cleanup.sh`

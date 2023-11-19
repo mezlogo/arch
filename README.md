@@ -1,51 +1,81 @@
 # Arch linux installation scripts
 
-Repo contains step-by-step guide and scripts for installation arch linux:
-- loader: UEFI `systemd-boot`
-- partition: gpt/ext4
-- kernel: `linux`
-- network: `NetworkManager` 
-- aur: `pikaur`
+This repo contains semi-automation scripts for installing arch linux from scratch.
 
+Table of content:
+1. about goals and results
+2. installation
+3. post-installation
+4. examples
 
-## 1. how to create virtual kvm/qemu for test
+## 1. goals and results
 
-```sh
-disk_name="archvm.qcow2"
-iso_name="archlinux.iso"
-qemu-img create -f qcow2 "$disk_name" 10G
-qemu-system-x86_64 -cpu host -smp 4 -enable-kvm -bios /usr/share/edk2-ovmf/x64/OVMF.fd -boot d -cdrom "$iso_name" -hda "$disk_name" -m 4096
-```
+The goal of `scripts` is to help with complex process of installation archlinux under `archiso`.
 
-## 2. prepare inside archiso
+The goal of this `README.md` is to describe how to do it in pleasant way.
 
-- open `/etc/pacman.conf`: `vim /etc/pacman.conf`
-- comment `CheckSpace`
-- uncomment `ParallelDownloads`
-- install git: `pacman -Sy git`
-- clone repo: `git clone https://github.com/mezlogo/arch`
+By the end of this installation you'll get the:
+- `GPT` formatted disk
+- with `ext4` partiotion
+- standart `linux` kernel
+- standart UEFI boot loader `systemd-boot`
+- `NetworkManager` for internet access
+- `ly` for TUI login screen (display manager)
+- `pikaur` for AUR wrapper
 
+## 2. installation
 
-## 3. install packages
+Preparation:
+- download `archiso`
+- burn iso to flash drive
+- boot installation media
 
-- config pacman and mirrors: `./0_useful_preparation.sh`
-- install base. Arguments depend on your system, for instance:
-  - amd `-a` notebook with nvme storage `-n` and wifi `-w`, with only two partitions `0`: `./1_install_base.sh -anw /dev/nvme0n1 0`
-  - qemu/kvm with dedicated root partition of 4 gb: `./1_install_base.sh /dev/sda 4`
-- chroot: `./2_copy_repo_and_chroot.sh`
+### 2.1. connect to iso using ssh
 
-## 4. chroot: create user, etc
+Installing by separate computer using ssh connection has lots of benefits:
+- your desktop can use bluetooth mouse and keyboard
+- your computer can output to a bigger external screen
+- your computer can have a browser and even copy-paste support - it drastically simplify troubleshooting while installation
 
-- create user, hostname, locale
-  - for amd notebook: `./3_configure_base.sh -a mobilestation /dev/nvme0n1p2 mezlogo`
-  - vm: `./3_configure_base.sh virtvm /dev/sda2 vagrant`
-- exit and reboot
+`archiso` already has an `openssh` package installed AND even `sshd.service` up and running by default!
 
-## 5. after reboot
+So, you just need to:
+- [server] change a root password by `passwd`
+- [server] if wireless connection: connect to the internet using `iwctl`
+- [server] if real hardware: get your local ip address by `ip a`
+- [client] make sure `~/.ssh/known_hosts` does not contain any record with desired ip
+- [client] connect: `ssh -l root ${IP_ADDRESS} -p 22`
 
-- test rfkill
-- exec `/home/postinstall/4_config_internet.sh`
-- exec `/home/postinstall/5_config_mirrors.sh`
-- copy to home and install pikaur `./6_install_pikaur.sh`
-- install pikaur using pikaur `pikaur -Syu pikaur`
-- remove junk: `rm -rf ~/.local ~/.cache ~/pikaur`
+note for vm: almost each vm hypervisor has a port forwarding and NAT networking
+
+note for `qemu`: forward port with `-nic user,hostfwd=tcp::${LOCAL_PORT}-:22`
+
+### 2.2. get this repo
+
+- sync package manager and install git: `pacman -Sy git`
+- clone this repo: `git clone http://github.com/mezlogo/arch`
+
+### 2.3. find out a target disk
+
+Execute `lsblk` and choose your disk. BEWARE this is the most important part, cos' you will format (erase) all disk content
+
+### 2.4. go step-by-step
+
+- search and choose top 5 fastest pacman repository mirrors: `./0_useful_preparation.sh`
+- write new GPT partition table, reformat /boot as fat32 and root as ext4, install linux on the disk:
+
+An AMD ucodes, `/dev/sda` - virtual disk and one partiotion for both: root and home dirs exmaple: `./1_install_base.sh -a /dev/sda 0`
+
+- chroot to new os: `./2_copy_repo_and_chroot.sh`
+- init locale, timezone, hostname, bootloader and create user: `/home/postinstall/3_configure_base.sh [-ai] $HOSTNAME $ROOT_PARTITION $USERNAME`
+
+An AMD ucodes, `/dev/sda2` as an root partition, `virtarch` is a hostname and `mezlogo` as a user will be `cd /home/postinstall; ./3_configure_base.sh -a virtarch /dev/sda2 mezlogo`
+
+- update mirrors list for fresh installed arch: `./4_config_mirrors.sh`
+- enabling network services: `./5_config_network.sh`
+- enabling ssh server, if you want to continue installation process using separate computer `./6_config_ssh_server.sh`
+- shutdown and reboot into fresh installed disk
+- reconnect with your ssh client
+- install pikaur from source code: `/home/postinstall/7_install_pikaur.sh`
+- cleanup disk: `/home/postinstall/8_cleanup.sh`
+- install nodejs, npm and deskmanager: `/home/postinstall/9_install_deskmanager.sh`

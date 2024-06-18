@@ -80,6 +80,6 @@ mkdir /mnt/home
 
 mount "${BLOCK_DEVICE}${NVME_PREFIX}"1 /mnt/boot
 
-pacstrap --noconfirm /mnt "${PACKAGES[@]}"
+pacstrap /mnt "${PACKAGES[@]}"
 
 genfstab -U /mnt > /mnt/etc/fstab

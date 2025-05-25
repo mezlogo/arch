@@ -139,7 +139,7 @@
         "type": "iso"
     },
     "ntp": true,
-    "packages": [],
+    "packages": ["kitty", "git", "neovim", "dolphin", "wofi"],
     "parallel_downloads": 0,
     "profile_config": {
         "gfx_driver": "All open-source",

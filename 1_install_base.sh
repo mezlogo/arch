@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 show_usage() {
-    cat << EOF
-Usage: ${0} [-ain] path_to_disk swap_size
+    USAGE="
+Usage: ./1_install_base.sh [-ain] path_to_disk swap_size
 Create 2 or 3 partions and install necessary packages
 When swap_size equals 0, then no seprate home partition would be created
 
@@ -10,8 +10,8 @@ When swap_size equals 0, then no seprate home partition would be created
 -a          Install AMD microcodes
 -i          Install INTEL microcodes
 -n          Install on nvme device: adds suffix 'p'
-
-EOF
+"
+  echo "$USAGE"
 }
 
 options=$(getopt hainw ${*})
@@ -19,7 +19,7 @@ options=$(getopt hainw ${*})
 if [ $? != 0 ] ; then show_usage; exit 1; fi
 eval set -- "${options}"
 
-PACKAGES=(base base-devel pacman-contrib linux-lts linux-lts-headers linux-firmware git neovim iwd openssh)
+PACKAGES=(base base-devel pacman-contrib linux-lts linux-lts-headers linux-firmware git neovim iwd openssh systemd systemd-ukify efibootmgr mkinitcpio)
 NVME_PREFIX=""
 while true; do
     case $1 in
@@ -47,7 +47,7 @@ timedatectl set-ntp true
 
 sgdisk -Z $BLOCK_DEVICE
 
-sgdisk -n 0:0:+1G -t 0:ef00 $BLOCK_DEVICE
+sgdisk -n 0:0:+512MiB -t 0:ef00 -c 0:efi $BLOCK_DEVICE
 
 if (( "$SWAP_SIZE" > 0 )); then
   sgdisk -n 0:0:+"$SWAP_SIZE"G -t 0:8200 $BLOCK_DEVICE
@@ -61,9 +61,9 @@ partprobe $BLOCK_DEVICE
 
 BOOT_PARTITION="${BLOCK_DEVICE}${NVME_PREFIX}"1
 SWAP_PARTITION="${BLOCK_DEVICE}${NVME_PREFIX}"2
+# Collision resolves in next swap size based if block
 ROOT_PARTITION="${BLOCK_DEVICE}${NVME_PREFIX}"2
 
-mkfs.fat -F32 "$BOOT_PARTITION"
 
 if (( "$SWAP_SIZE" > 0 )); then
   mkswap "$SWAP_PARTITION"
@@ -71,14 +71,11 @@ if (( "$SWAP_SIZE" > 0 )); then
   swapon "$SWAP_PARTITION"
 fi
 
+mkfs.fat -F32 "$BOOT_PARTITION"
 mkfs.ext4 "$ROOT_PARTITION"
 
 mount "$ROOT_PARTITION" /mnt
-
-mkdir /mnt/boot
-mkdir /mnt/home
-
-mount "${BLOCK_DEVICE}${NVME_PREFIX}"1 /mnt/boot
+mount --mkdir "$BOOT_PARTITION" /mnt/efi
 
 pacstrap /mnt "${PACKAGES[@]}"
 

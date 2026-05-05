@@ -64,6 +64,8 @@ if ! grep '^%wheel' /etc/sudoers ; then echo '%wheel      ALL=(ALL) ALL' >> /etc
 echo "#>> Configuring UKI"
 echo "root=PARTUUID=$(blkid -s PARTUUID -o value $ROOT_PARTITION) rw" > /etc/kernel/cmdline
 
+cp linux-lts.preset /etc/mkinitcpio.d/linux-lts.preset
+
 bootctl install
 mkinitcpio -P
 

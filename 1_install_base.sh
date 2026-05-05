@@ -19,7 +19,7 @@ options=$(getopt hainw ${*})
 if [ $? != 0 ] ; then show_usage; exit 1; fi
 eval set -- "${options}"
 
-PACKAGES=(base base-devel pacman-contrib linux-lts linux-lts-headers linux-firmware git neovim networkmanager openssh)
+PACKAGES=(base base-devel pacman-contrib linux-lts linux-lts-headers linux-firmware git neovim iwd openssh)
 NVME_PREFIX=""
 while true; do
     case $1 in

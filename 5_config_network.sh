@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-systemctl disable systemd-networkd.socket
-systemctl disable systemd-resolved.service
-systemctl enable NetworkManager.service
-systemctl enable systemd-timesyncd.service
+systemctl enable systemd-networkd
+systemctl enable systemd-resolved
+systemctl enable iwd
+timedatectl set-ntp true

@@ -5,25 +5,41 @@ This is an old version of written by hand collection of scripts.
 This repo contains semi-automation scripts for installing arch linux from scratch.
 
 Table of content:
-1. about goals and results
+1. about
 2. installation
 3. post-installation
 4. examples
 
-## 1. goals and results
+## 1. about
 
 The goal of `scripts` is to help with complex process of installation archlinux under `archiso`.
 
 The goal of this `README.md` is to describe how to do it in pleasant way.
 
-By the end of this installation you'll get the:
-- `GPT` formatted disk
-- with `ext4` partiotion
-- standart `linux` kernel
-- standart UEFI boot loader `systemd-boot`
-- `NetworkManager` for internet access
-- `ly` for TUI login screen (display manager)
-- `pikaur` for AUR wrapper
+Opinionated, made decisions, judgments or by the end of this installation you'll get the:
+- cpu: amd + UCODES
+- gpu: nvidia, amd internal gpu
+- initramfs: mkinitcpio
+- locales: en, ru
+- timezone: +3
+- disk: nvme, hdd, ssd, virtual
+- dual boot windows 10: TBD
+- disk table: GPT
+- partitions: boot and root
+- boot partition: ESP: fat32, 512mb, 
+- swap: swap partition. Future better decision is to use zram
+- loader: systemd-boot
+- kernel: linux-lts
+- init: systemd
+- mirrors: RU
+- network: systemd-networkd
+- resolve: systemd-resolved
+- time: systemd-timesyncd
+- wifi: iwd
+- bluetooth: bluetui
+- rfkill: sudo systemctl enable rfkill-unblock@all.service
+- aur: yay-bin
+- journal logs: 3 days
 
 ## 2. installation
 
@@ -64,7 +80,7 @@ Execute `lsblk` and choose your disk. BEWARE this is the most important part, co
 ### 2.4. go step-by-step
 
 - search and choose top 5 fastest pacman repository mirrors: `./0_useful_preparation.sh`
-- write new GPT partition table, reformat /boot as fat32 and root as ext4, install linux on the disk:
+- write new GPT partition table, reformat /efi as fat32 and root as ext4, install linux on the disk:
 
 An AMD ucodes, `/dev/sda` - virtual disk and one partiotion for both: root and home dirs exmaple: `./1_install_base.sh -a /dev/sda 0`
 
@@ -78,5 +94,5 @@ An AMD ucodes, `/dev/sda2` as an root partition, `virtarch` is a hostname and `m
 - enabling ssh server, if you want to continue installation process using separate computer `./6_config_ssh_server.sh`
 - shutdown and reboot into fresh installed disk
 - reconnect with your ssh client
-- install pikaur from source code: `/home/postinstall/7_install_pikaur.sh`
-- install nodejs, npm and deskmanager, and cleanup: `/home/postinstall/8_install_deskmanager_and_cleanup.sh`
+- install yay from source code: `/home/postinstall/7_install_yay.sh`
+- cleanup: `/home/postinstall/8_cleanup.sh`

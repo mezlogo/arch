@@ -1,0 +1,126 @@
+# Justfile for Arch Linux installation scripts
+# Usage: just <recipe>
+
+# Default: show available recipes
+default:
+    @just --list
+
+# Variables (override with `just var=value recipe`)
+disk := "/dev/sda"
+swap_size := "0"
+hostname := "arch"
+root_partition := disk + (if swap_size == "0" { "2" } else { "3" })
+username := "user"
+ucode := ""  # "-a" for AMD, "-i" for INTEL
+
+# ---------- QEMU TEST ENVIRONMENT ----------
+
+# Create a qcow2 disk image (default: disk.qcow, 20G)
+create_disk file="disk.qcow" size="20":
+    qemu-img create -f qcow2 {{file}} {{size}}G
+    @echo "Created {{file}} ({{size}}G)"
+
+# Launch VM with UEFI, 4 CPU, 4G RAM, host network, SSH forwarded to port 2022
+# Requires: arch.iso in current directory, disk.qcow already created
+install_arch iso="arch.iso" disk="disk.qcow":
+    qemu-system-x86_64 \
+        -enable-kvm \
+        -m 4G \
+        -smp 4 \
+        -cpu host \
+        -drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE.fd \
+        -drive if=pflash,format=raw,file=ovmf_vars.fd \
+        -drive file={{disk}},format=qcow2,if=virtio \
+        -cdrom {{iso}} \
+        -boot order=d \
+        -nic user,hostfwd=tcp::2022-:22 \
+        -nographic
+
+# Launch VM without ISO (boot from disk)
+launch_arch disk="disk.qcow":
+    qemu-system-x86_64 \
+        -enable-kvm \
+        -m 4G \
+        -smp 4 \
+        -cpu host \
+        -drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE.fd \
+        -drive if=pflash,format=raw,file=ovmf_vars.fd \
+        -drive file={{disk}},format=qcow2,if=virtio \
+        -boot order=c \
+        -nic user,hostfwd=tcp::2022-:22 \
+        -nographic
+
+# Prepare OVMF vars file for UEFI boot (copy from template)
+prepare_ovmf:
+    cp /usr/share/OVMF/OVMF_VARS.fd ovmf_vars.fd
+    @echo "OVMF vars file ready"
+
+# ---------- INSTALLATION ----------
+
+# Step 0: Rank mirrors and install pacman-contrib
+mirrors:
+    ./0_useful_preparation.sh
+
+# Step 1: Partition disk, format, install base packages
+# Example: just install_base disk=/dev/sda swap_size=0 ucode=-a
+install_base:
+    ./1_install_base.sh {{ucode}} {{disk}} {{swap_size}}
+
+# Step 2: Copy repo to new system and chroot
+chroot:
+    ./2_copy_repo_and_chroot.sh
+
+# Step 3: Configure hostname, timezone, locale, bootloader, user
+# Run inside chroot: cd /home/postinstall && just configure_base
+configure_base:
+    ./3_configure_base.sh {{ucode}} {{hostname}} {{root_partition}} {{username}}
+
+# Step 4: Update mirrors on fresh system
+config_mirrors:
+    ./4_config_mirrors.sh
+
+# Step 5: Enable network services (systemd-networkd, resolved, iwd)
+config_network:
+    ./5_config_network.sh
+
+# Step 6: Enable SSH server
+config_ssh:
+    ./6_config_ssh_server.sh
+
+# Step 7: Install yay (AUR helper) from source
+install_yay:
+    ./7_install_yay.sh
+
+# Step 8: Cleanup postinstall files and caches
+cleanup:
+    ./8_cleanup.sh
+
+# ---------- CONVENIENCE ----------
+
+# Full install flow (run from archiso, disk must be specified)
+# Example: just full_install disk=/dev/sda swap_size=0 ucode=-a hostname=myarch username=me
+full_install: mirrors install_base chroot
+    @echo "Now run inside chroot:"
+    @echo "  cd /home/postinstall"
+    @echo "  just configure_base"
+    @echo "  just config_mirrors"
+    @echo "  just config_network"
+    @echo "  just config_ssh"
+    @echo "  exit"
+    @echo "  reboot"
+
+# Post-chroot setup (run after reboot into fresh system)
+post_install: install_yay cleanup
+    @echo "Post-install complete. Reboot recommended."
+
+# SSH into VM (QEMU test)
+ssh_vm port="2022":
+    ssh -l root localhost -p {{port}}
+
+# SSH into VM with custom user
+ssh_vm_user user="user" port="2022":
+    ssh -l {{user}} localhost -p {{port}}
+
+# Show help
+help:
+    @just --list

@@ -1,17 +1,31 @@
 # mkinitcpio preset file for the 'linux-lts' package
+#
+# UKI-only preset for systemd-boot. The kernel, initramfs, kernel command
+# line and optional microcode are packed into:
+#   /efi/EFI/Linux/arch-linux-lts.efi
+#
+# systemd-boot auto-discovers UKIs from ESP/EFI/Linux.
+#
+# 3_configure_base.sh appends e.g.:
+#   default_options="--microcode /boot/amd-ucode.img"
+# when -a/-i is used, so leave default_options commented here.
 
 #ALL_config="/etc/mkinitcpio.conf"
 ALL_kver="/boot/vmlinuz-linux-lts"
-#ALL_kerneldest="/boot/vmlinuz-linux-lts"
 
 PRESETS=('default')
-#PRESETS=('default' 'fallback')
 
 #default_config="/etc/mkinitcpio.conf"
-default_image="/boot/initramfs-linux-lts.img"
+#default_image="/boot/initramfs-linux-lts.img"
 default_uki="/efi/EFI/Linux/arch-linux-lts.efi"
 #default_options="--splash /usr/share/systemd/bootctl/splash-arch.bmp"
 
+# Optional fallback UKI. To enable:
+#   1. change PRESETS to: PRESETS=('default' 'fallback')
+#   2. uncomment fallback_uki and fallback_options below
+#   3. if using -a/-i, also append --microcode to fallback_options in
+#      3_configure_base.sh
+# Keep fallback_image commented for UKI-only mode.
 #fallback_config="/etc/mkinitcpio.conf"
 #fallback_image="/boot/initramfs-linux-lts-fallback.img"
 #fallback_uki="/efi/EFI/Linux/arch-linux-lts-fallback.efi"

@@ -188,7 +188,7 @@ mount --mkdir "$BOOT_PARTITION" /mnt/efi
 # ---------------------------------------------------------------------------
 
 echo "#>> Installing packages: ${PACKAGES[*]}"
-pacstrap --needed --noconfirm /mnt "${PACKAGES[@]}"
+pacstrap /mnt "${PACKAGES[@]}"
 
 echo "#>> Writing /etc/fstab"
 genfstab -U /mnt > /mnt/etc/fstab

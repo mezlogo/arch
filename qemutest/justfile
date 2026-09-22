@@ -51,7 +51,9 @@ ssh_arch user=ssh_user:
     -ssh-keygen -R "[localhost]:{{ssh_port}}"
     ssh -p {{ssh_port}} {{user}}@localhost
 
-# Remove stale host key, then copy the whole repo to {{repo_dest}} on the VM.
+# Copy only git-tracked files to {{repo_dest}} on the VM.
+# Uses `git archive HEAD` (tracked files only, .gitignore respected) compressed with gzip.
 scp_repo user=ssh_user dest=repo_dest:
-    -ssh-keygen -R "[localhost]:{{ssh_port}}"
-    scp -P {{ssh_port}} -r {{repo_root}} {{user}}@localhost:{{dest}}
+    cd "{{repo_root}}" && \
+        git archive --format=tar HEAD | gzip -1 | \
+        ssh -p {{ssh_port}} {{user}}@localhost 'mkdir -p "{{dest}}" && tar -xzf - -C "{{dest}}"'

@@ -5,8 +5,10 @@ size := "20"
 memory := "4G"
 cpus := "4"
 ssh_port := "2022"
-ovmf_code := "/usr/share/edk2-ovmf/x64/OVMF_CODE.fd"
-ovmf_vars := "/usr/share/edk2-ovmf/x64/OVMF_VARS.fd"
+ssh_user := "root"
+
+ovmf_code := "/usr/share/edk2/x64/OVMF_CODE.4m.fd"
+ovmf_vars := "/usr/share/edk2/x64/OVMF_VARS.4m.fd"
 ovmf_vars_local := "OVMF_VARS.fd"
 
 # Create a qcow2 disk. Default name: disk.qcow, default size: 20G.
@@ -41,3 +43,8 @@ launch_arch disk=disk:
         -drive if=pflash,format=raw,file={{ovmf_vars_local}} \
         -drive file={{disk}},format=qcow2,if=virtio \
         -nic user,hostfwd=tcp::{{ssh_port}}-:22
+
+# Remove stale host key for localhost:{{ssh_port}} and SSH into the VM.
+ssh_arch user=ssh_user:
+    -ssh-keygen -R "[localhost]:{{ssh_port}}"
+    ssh -p {{ssh_port}} {{user}}@localhost

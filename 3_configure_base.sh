@@ -99,10 +99,6 @@ echo "root=PARTUUID=$(blkid -s PARTUUID -o value "$ROOT_PARTITION") rw" \
 # is safe because later assignments override earlier ones in preset files,
 # and the shipped preset has default_options commented out.
 cp "$SCRIPT_DIR/linux-lts.preset" /etc/mkinitcpio.d/linux-lts.preset
-if [[ -n "$UCODE_IMAGE" ]]; then
-    echo "default_options=\"--microcode $UCODE_IMAGE\"" \
-        >> /etc/mkinitcpio.d/linux-lts.preset
-fi
 
 bootctl install
 

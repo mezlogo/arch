@@ -60,10 +60,9 @@ PACKAGES=(
     iwd
     openssh
     sudo
-    systemd
-    systemd-ukify
     efibootmgr
     mkinitcpio
+    iptables
 )
 
 FORCE_NVME_PREFIX=""
@@ -189,7 +188,7 @@ mount --mkdir "$BOOT_PARTITION" /mnt/efi
 # ---------------------------------------------------------------------------
 
 echo "#>> Installing packages: ${PACKAGES[*]}"
-pacstrap /mnt "${PACKAGES[@]}"
+pacstrap --needed --noconfirm /mnt "${PACKAGES[@]}"
 
 echo "#>> Writing /etc/fstab"
 genfstab -U /mnt > /mnt/etc/fstab

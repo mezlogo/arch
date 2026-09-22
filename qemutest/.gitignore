@@ -1,3 +1,4 @@
 *.qcow
 *.qcow2
+OVMF_VARS.fd
 

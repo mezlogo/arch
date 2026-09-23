@@ -51,12 +51,10 @@ die() { echo "Error: $*" >&2; exit 1; }
 PACKAGES=(
     base
     base-devel
-    pacman-contrib
     linux-lts
-    linux-lts-headers
-    linux-firmware
+    linux-firmware-intel
     git
-    neovim
+    vim
     iwd
     openssh
     sudo

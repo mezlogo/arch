@@ -1,6 +1,6 @@
 # Arch linux installation scripts
 
-This is an old version of written by hand collection of scripts.
+This repo install min setup for running desktop less environment without any QoL. Primary goal: download and install as small as possible environment with network and that's all. Everything else would be installed after.
 
 This repo contains semi-automation scripts for installing arch linux from scratch.
 

@@ -78,7 +78,7 @@ systemctl enable iwd.service
 # ---------------------------------------------------------------------------
 
 echo "#>> Enabling NTP"
-timedatectl set-ntp true
+systemctl enable systemd-timesyncd.service
 
 # ---------------------------------------------------------------------------
 # Do NOT block boot on network-online.target

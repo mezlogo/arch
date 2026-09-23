@@ -151,8 +151,6 @@ fi
 # systemd-boot
 # ---------------------------------------------------------------------------
 echo "#>> Installing systemd-boot"
-# /efi is formatted as FAT32, Unix file permissions doesn't work here, HOWEVER this can fix warning for just better health.
-chmod 700 /efi/loader
 bootctl install
 
 echo "#>> Installing /efi/loader/loader.conf"

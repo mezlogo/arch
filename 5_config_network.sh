@@ -57,6 +57,8 @@ cat > /etc/iwd/main.conf <<'EOF'
 EnableNetworkConfiguration=false
 EOF
 
+systemctl enable rfkill-unblock@all.service
+
 # ---------------------------------------------------------------------------
 # resolv.conf -> resolved stub
 # ---------------------------------------------------------------------------

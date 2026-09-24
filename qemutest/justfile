@@ -51,6 +51,25 @@ ssh_arch user=ssh_user:
     -ssh-keygen -R "[localhost]:{{ssh_port}}"
     ssh -p {{ssh_port}} {{user}}@localhost
 
+# Copy a custom local file/directory to the VM using scp.
+# Examples:
+#   just scp_dir ../my-dir /root/my-dir
+#   just scp_dir ./config.yaml /root/config.yaml
+scp_dir src dest=repo_dest user=ssh_user:
+    scp -P {{ssh_port}} -r "{{src}}" "{{user}}@localhost:{{dest}}"
+
+# rsync analog of scp_dir. Better for repeated syncs.
+# Requires rsync on the host and VM. The first line installs it in the VM
+# (default ssh_user is root; adjust if you changed it).
+#
+# Trailing slash semantics are rsync's:
+#   rsync_dir src/ dest/   -> copy contents of src into dest
+#   rsync_dir src  dest/   -> copy src directory itself into dest
+#
+# Add --delete to mirror exactly; omit it to be safe.
+rsync_dir src dest=repo_dest user=ssh_user:
+    rsync -avz --info=progress2 -e "ssh -p {{ssh_port}}" "{{src}}" "{{user}}@localhost:{{dest}}"
+
 # Copy only git-tracked files to {{repo_dest}} on the VM.
 # Uses `git archive HEAD` (tracked files only, .gitignore respected) compressed with gzip.
 scp_repo user=ssh_user dest=repo_dest:

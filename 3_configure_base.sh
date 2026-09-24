@@ -139,14 +139,6 @@ echo "root=PARTUUID=${ROOT_PARTUUID} rw" > /etc/kernel/cmdline
 echo "#>> Installing linux-lts.preset"
 install -m 0644 "$SCRIPT_DIR/linux-lts.preset" /etc/mkinitcpio.d/linux-lts.preset
 
-if [[ -n "$UCODE_IMAGE" ]]; then
-    [[ -f "$UCODE_IMAGE" ]] \
-        || die "requested microcode image $UCODE_IMAGE not found; did 1_install_base.sh run with the matching -a/-i?"
-    echo "#>> Embedding microcode into UKI: $UCODE_IMAGE"
-    echo "default_options=\"--microcode ${UCODE_IMAGE}\"" \
-        >> /etc/mkinitcpio.d/linux-lts.preset
-fi
-
 # ---------------------------------------------------------------------------
 # systemd-boot
 # ---------------------------------------------------------------------------

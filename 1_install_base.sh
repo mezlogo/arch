@@ -178,8 +178,8 @@ mkfs.ext4 -L root "$ROOT_PARTITION"
 echo "#>> Mounting root at /mnt"
 mount "$ROOT_PARTITION" /mnt
 
-echo "#>> Mounting EFI at /mnt/efi"
-mount --mkdir "$BOOT_PARTITION" /mnt/efi
+echo "#>> Mounting EFI at /mnt/efi (umask=0077)"
+mount -o umask=0077 --mkdir "$BOOT_PARTITION" /mnt/efi
 
 # ---------------------------------------------------------------------------
 # Install

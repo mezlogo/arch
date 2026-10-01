@@ -4,6 +4,7 @@ disk := "disk.qcow"
 size := "20"
 memory := "4G"
 cpus := "4"
+ssh_host := "localhost"
 ssh_port := "2022"
 ssh_user := "root"
 repo_root := parent_directory(justfile_directory())
@@ -30,7 +31,7 @@ install_arch iso disk=disk:
         -drive if=pflash,format=raw,file={{ovmf_vars_local}} \
         -drive file={{disk}},format=qcow2,if=virtio \
         -cdrom {{iso}} \
-        -nic user,hostfwd=tcp::{{ssh_port}}-:22 \
+        -nic user,hostfwd=tcp:{{ssh_host}}:{{ssh_port}}-:22 \
         -boot d
 
 # Launch VM without ISO. Default disk: disk.qcow.
@@ -44,19 +45,19 @@ launch_arch disk=disk:
         -drive if=pflash,format=raw,readonly=on,file={{ovmf_code}} \
         -drive if=pflash,format=raw,file={{ovmf_vars_local}} \
         -drive file={{disk}},format=qcow2,if=virtio \
-        -nic user,hostfwd=tcp::{{ssh_port}}-:22
+        -nic user,hostfwd=tcp:{{ssh_host}}:{{ssh_port}}-:22
 
-# Remove stale host key for localhost:{{ssh_port}} and SSH into the VM.
-ssh_arch user=ssh_user:
-    -ssh-keygen -R "[localhost]:{{ssh_port}}"
-    ssh -p {{ssh_port}} {{user}}@localhost
+# Remove stale host key for the target host and SSH into the VM.
+ssh_arch user=ssh_user host=ssh_host:
+    -ssh-keygen -R "[{{host}}]:{{ssh_port}}"
+    ssh -p {{ssh_port}} {{user}}@{{host}}
 
 # Copy a custom local file/directory to the VM using scp.
 # Examples:
 #   just scp_dir ../my-dir /root/my-dir
 #   just scp_dir ./config.yaml /root/config.yaml
-scp_dir src dest=repo_dest user=ssh_user:
-    scp -P {{ssh_port}} -r "{{src}}" "{{user}}@localhost:{{dest}}"
+scp_dir src dest=repo_dest user=ssh_user host=ssh_host:
+    scp -P {{ssh_port}} -r "{{src}}" "{{user}}@{{host}}:{{dest}}"
 
 # rsync analog of scp_dir. Better for repeated syncs.
 # Requires rsync on the host and VM. The first line installs it in the VM
@@ -67,12 +68,12 @@ scp_dir src dest=repo_dest user=ssh_user:
 #   rsync_dir src  dest/   -> copy src directory itself into dest
 #
 # Add --delete to mirror exactly; omit it to be safe.
-rsync_dir src dest=repo_dest user=ssh_user:
-    rsync -avz --info=progress2 -e "ssh -p {{ssh_port}}" "{{src}}" "{{user}}@localhost:{{dest}}"
+rsync_dir src dest=repo_dest user=ssh_user host=ssh_host:
+    rsync -avz --info=progress2 -e "ssh -p {{ssh_port}}" "{{src}}" "{{user}}@{{host}}:{{dest}}"
 
 # Copy only git-tracked files to {{repo_dest}} on the VM.
 # Uses `git archive HEAD` (tracked files only, .gitignore respected) compressed with gzip.
-scp_repo user=ssh_user dest=repo_dest:
+scp_repo user=ssh_user dest=repo_dest host=ssh_host:
     cd "{{repo_root}}" && \
         git archive --format=tar HEAD | gzip -1 | \
-        ssh -p {{ssh_port}} {{user}}@localhost 'mkdir -p "{{dest}}" && tar -xzf - -C "{{dest}}"'
+        ssh -p {{ssh_port}} {{user}}@{{host}} 'mkdir -p "{{dest}}" && tar -xzf - -C "{{dest}}"'

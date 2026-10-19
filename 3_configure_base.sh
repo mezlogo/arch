@@ -136,9 +136,15 @@ echo "root=PARTUUID=${ROOT_PARTUUID} rw" > /etc/kernel/cmdline
 # assignment wins, so appending is safe even though the preset ships
 # with default_options commented out.
 
-echo "#>> Installing linux-lts.preset"
+echo "#>> Installing kernel presets"
+install -m 0644 "$SCRIPT_DIR/linux.preset" /etc/mkinitcpio.d/linux.preset
 install -m 0644 "$SCRIPT_DIR/linux-lts.preset" /etc/mkinitcpio.d/linux-lts.preset
 
+if [[ -n "$UCODE_IMAGE" ]]; then
+    echo "#>> Adding microcode $UCODE_IMAGE to presets"
+    echo "default_options=\"--microcode $UCODE_IMAGE\"" >> /etc/mkinitcpio.d/linux.preset
+    echo "default_options=\"--microcode $UCODE_IMAGE\"" >> /etc/mkinitcpio.d/linux-lts.preset
+fi
 # ---------------------------------------------------------------------------
 # systemd-boot
 # ---------------------------------------------------------------------------
@@ -149,6 +155,14 @@ echo "#>> Installing /efi/loader/loader.conf"
 install -d -m 0755 /efi/loader
 install -m 0644 "$SCRIPT_DIR/template/loader.conf" /efi/loader/loader.conf
 
+# Set default boot entry to the non-lts kernel
+if grep -q '^default ' /efi/loader/loader.conf; then
+    sed -i 's/^default .*/default arch-linux.efi/' /efi/loader/loader.conf
+else
+    echo 'default arch-linux.efi' >> /efi/loader/loader.conf
+fi
+
+    
 # The ESP is FAT32 and therefore has no Unix permissions; the loader
 # directory is readable by anyone who can mount the ESP. systemd-boot
 # stores a random seed in /efi/loader/random-seed and warns when that

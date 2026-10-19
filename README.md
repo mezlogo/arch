@@ -28,8 +28,7 @@ Opinionated, made decisions, judgments or by the end of this installation you'll
 - partitions: boot and root
 - boot partition: ESP: fat32, 512mb, 
 - swap: swap partition. Future better decision is to use zram
-- loader: systemd-boot
-- kernel: linux-lts
+- kernel: linux (default) and linux-lts
 - init: systemd
 - mirrors: RU
 - network: systemd-networkd

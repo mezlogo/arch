@@ -51,6 +51,7 @@ die() { echo "Error: $*" >&2; exit 1; }
 PACKAGES=(
     base
     base-devel
+    linux
     linux-lts
     linux-firmware-intel
     git

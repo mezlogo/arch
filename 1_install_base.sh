@@ -52,7 +52,8 @@ PACKAGES=(
     base
     base-devel
     linux
-    linux-lts
+
+  
     linux-firmware-intel
     git
     vim

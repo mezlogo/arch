@@ -132,19 +132,18 @@ echo "root=PARTUUID=${ROOT_PARTUUID} rw" > /etc/kernel/cmdline
 # UKI preset
 # ---------------------------------------------------------------------------
 # Copy the shipped linux-lts.preset, then append an override line if a
+# Copy the shipped linux.preset, then append an override line if a
 # microcode image was requested. In mkinitcpio preset files a later
 # assignment wins, so appending is safe even though the preset ships
 # with default_options commented out.
-
 echo "#>> Installing kernel presets"
 install -m 0644 "$SCRIPT_DIR/linux.preset" /etc/mkinitcpio.d/linux.preset
-install -m 0644 "$SCRIPT_DIR/linux-lts.preset" /etc/mkinitcpio.d/linux-lts.preset
 
 if [[ -n "$UCODE_IMAGE" ]]; then
-    echo "#>> Adding microcode $UCODE_IMAGE to presets"
+    echo "#>> Adding microcode $UCODE_IMAGE to preset"
     echo "default_options=\"--microcode $UCODE_IMAGE\"" >> /etc/mkinitcpio.d/linux.preset
-    echo "default_options=\"--microcode $UCODE_IMAGE\"" >> /etc/mkinitcpio.d/linux-lts.preset
 fi
+  
 # ---------------------------------------------------------------------------
 # systemd-boot
 # ---------------------------------------------------------------------------
@@ -183,6 +182,7 @@ mkinitcpio -P
 echo
 echo "#>> Base configuration complete."
 echo "#>> Verify the UKI with:"
-echo "     lsinitcpio /efi/EFI/Linux/arch-linux-lts.efi | grep -i microcode"
-echo "     strings /efi/EFI/Linux/arch-linux-lts.efi | grep -m1 root="
+echo "     lsinitcpio /efi/EFI/Linux/arch-linux.efi | grep -i microcode"
+echo "     strings /efi/EFI/Linux/arch-linux.efi | grep -m1 root="
+  
 echo "#>> Next: ./4_config_mirrors.sh"

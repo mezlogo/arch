@@ -7,9 +7,11 @@
 #
 # systemd-boot auto-discovers UKIs from ESP/EFI/Linux.
 #
-# 3_configure_base.sh appends e.g.:
-#   default_options="--microcode /boot/amd-ucode.img"
-# when -a/-i is used, so leave default_options commented here.
+# 3_configure_base.sh enables the 'microcode' hook in
+# /etc/mkinitcpio.conf when -a/-i is used, so leave default_options
+# commented here.
+
+  
 
 #ALL_config="/etc/mkinitcpio.conf"
 ALL_kver="/boot/vmlinuz-linux"

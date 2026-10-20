@@ -132,17 +132,24 @@ echo "root=PARTUUID=${ROOT_PARTUUID} rw" > /etc/kernel/cmdline
 # UKI preset
 # ---------------------------------------------------------------------------
 # Copy the shipped linux-lts.preset, then append an override line if a
-# Copy the shipped linux.preset, then append an override line if a
-# microcode image was requested. In mkinitcpio preset files a later
-# assignment wins, so appending is safe even though the preset ships
-# with default_options commented out.
+# Install the shipped UKI preset. Microcode is handled by the
+# 'microcode' hook in /etc/mkinitcpio.conf, not by default_options.
 echo "#>> Installing kernel presets"
 install -m 0644 "$SCRIPT_DIR/linux.preset" /etc/mkinitcpio.d/linux.preset
 
 if [[ -n "$UCODE_IMAGE" ]]; then
-    echo "#>> Adding microcode $UCODE_IMAGE to preset"
-    echo "default_options=\"--microcode $UCODE_IMAGE\"" >> /etc/mkinitcpio.d/linux.preset
+    echo "#>> Enabling microcode hook in /etc/mkinitcpio.conf"
+    if ! grep -qE '^HOOKS=.*\bmicrocode\b' /etc/mkinitcpio.conf; then
+        if grep -qE '^HOOKS=.*\bautodetect\b' /etc/mkinitcpio.conf; then
+            sed -i -E 's/^(HOOKS=.*)\bautodetect\b/\1autodetect microcode/' /etc/mkinitcpio.conf
+        else
+            sed -i -E 's/^(HOOKS=.*)\)/\1 microcode)/' /etc/mkinitcpio.conf
+        fi
+        grep -qE '^HOOKS=.*\bmicrocode\b' /etc/mkinitcpio.conf \
+            || die "could not add microcode hook to /etc/mkinitcpio.conf"
+    fi
 fi
+
   
 # ---------------------------------------------------------------------------
 # systemd-boot
